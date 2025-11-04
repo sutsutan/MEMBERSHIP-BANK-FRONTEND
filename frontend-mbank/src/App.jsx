@@ -28,7 +28,12 @@ function App() {
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
       </p>
+<<<<<<< HEAD
       <p className=''>DBAUWIKSJBDHAWJKSNDJWKASDmk</p>
+=======
+      <p className='mt-5'>DBAUWIKSJBDHAWJKSNDJWKASDmk</p>
+      
+>>>>>>> 62e6fe661082312371abd219a02d0e667bdd309c
     </>
   )
 }

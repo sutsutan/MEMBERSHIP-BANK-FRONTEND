@@ -16,10 +16,10 @@ function App() {
       <AdminPanel />
       <CheckBalance />
       <RegisterMember />
-      <div className="anton">
-        <h1 className='kemon'>AMIN</h1>
-      </div>
       <UserList/>
+      <div className="test">
+        
+      </div>
     </>
   )
 }

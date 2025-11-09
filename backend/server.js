@@ -20,7 +20,6 @@ app.get('/api/anggota/:rfidTag', async (req, res) => {
     const rfidTag = req.params.rfidTag;
 
     try {
-        // Query untuk mengambil data anggota dan semua riwayat transaksinya
         const { data, error } = await supabase
             .from('anggota')
             .select(`
@@ -68,7 +67,6 @@ app.post('/api/register/member', async (req, res) => {
         });
 
     } catch (error) {
-        // Error 23505 adalah kode untuk duplikasi (RFID Tag sudah ada)
         if (error.code === '23505') {
             return res.status(409).json({ message: 'RFID Tag sudah terdaftar.' });
         }
@@ -110,6 +108,92 @@ app.post('/api/transaction', async (req, res) => {
     } catch (error) {
         console.error('Error saat transaksi:', error.message);
         res.status(500).json({ message: 'Transaksi gagal diproses.', detail: error.message });
+    }
+});
+
+// Ambil Semua Daftar Anggota (READ ALL)
+app.get('/api/anggota', async (req, res) => {
+    try {
+        const { data, error } = await supabase
+            .from('anggota')
+            .select('nama, rfid_tag, saldo')
+            .order('nama', { ascending: true });
+
+        if (error) throw error;
+        
+        res.json(data);
+
+    } catch (error) {
+        console.error('Error saat mengambil daftar anggota:', error.message);
+        res.status(500).json({ message: 'Gagal mengambil data anggota.' });
+    }
+});
+
+// Ambil Riwayat Transaksi Lengkap (READ ALL)
+app.get('/api/transaksi/riwayat', async (req, res) => {
+    // Ambil parameter query 'limit' jika ada (misal: /api/transaksi/riwayat?limit=5)
+    const limit = req.query.limit ? parseInt(req.query.limit) : null;
+    
+    try {
+        // Gabungkan tabel transaksi dan anggota
+        let query = supabase
+            .from('transaksi')
+            .select(`
+                waktu_transaksi, 
+                jenis_transaksi, 
+                jumlah, 
+                anggota!inner (nama, rfid_tag)
+            `)
+            .order('waktu_transaksi', { ascending: false }); // Urutkan dari yang terbaru
+
+        if (limit && limit > 0) {
+            query = query.limit(limit);
+        }
+
+        const { data, error } = await query;
+        
+        if (error) throw error;
+
+        // Memformat data agar lebih mudah digunakan di frontend
+        const formattedData = data.map(trx => ({
+            waktu_transaksi: trx.waktu_transaksi,
+            jenis_transaksi: trx.jenis_transaksi,
+            jumlah: trx.jumlah,
+            nama: trx.anggota.nama,
+            rfid_tag: trx.anggota.rfid_tag,
+        }));
+        
+        res.json(formattedData);
+
+    } catch (error) {
+        console.error('Error saat mengambil riwayat transaksi:', error.message);
+        res.status(500).json({ message: 'Gagal mengambil riwayat transaksi.' });
+    }
+});
+
+// Ambil Statistik Akun untuk Dashboard (LEBIH EFISIEN)
+app.get('/api/statistics', async (req, res) => {
+    try {
+        // Cukup ambil data dari View yang sudah melakukan semua perhitungan
+        const { data, error } = await supabase
+            .from('dashboard_statistics') // Mengambil data dari VIEW
+            .select('*')
+            .single(); // Karena View hanya mengembalikan satu baris data
+
+        if (error) throw error;
+        
+        // Data yang dikembalikan sudah berupa statistik yang diagregasi
+        res.json({
+            total_balance: data.total_balance,
+            total_transactions: data.total_transactions,
+            active_members: data.active_members,
+            // Menggunakan data transaksi sebagai placeholder untuk 'pending trans'
+            pending_trans: data.total_transactions 
+        });
+
+    } catch (error) {
+        console.error('Error saat mengambil statistik dashboard (View):', error.message);
+        res.status(500).json({ message: 'Gagal mengambil data statistik.' });
     }
 });
 

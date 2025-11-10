@@ -18,7 +18,7 @@ const formatTime = (isoString) => {
 };
 
 
-export default function AdminPanel({ setActiveTab, onTransactionClick }) {
+export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKey }) {
     const [stats, setStats] = useState(null);
     const [recentTransactions, setRecentTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -30,6 +30,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick }) {
     // Fetch data statistik dan 5 transaksi terbaru
     useEffect(() => {
         const fetchData = async () => {
+            
             setLoading(true);
             setError(null);
             try {
@@ -52,7 +53,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick }) {
         };
 
         fetchData();
-    }, []);
+    }, [refreshKey]);
 
     // Hardcoded user info
     const currentUser = {
@@ -77,10 +78,10 @@ export default function AdminPanel({ setActiveTab, onTransactionClick }) {
     }
 
     const statsDisplay = {
-        totalBalance: stats.total_balance,
-        pendingTransactions: stats.total_transactions, 
-        transactionValue: stats.total_transactions,
-        activeMember: stats.active_members
+        totalBalance: stats.total_balance ?? 0,
+        pendingTransactions: stats.pending_trans ?? stats.total_transactions ?? 0,
+        transactionValue: stats.total_transactions ?? 0,
+        activeMember: stats.active_members ?? 0
     };
 
     const handleCopy = () => {

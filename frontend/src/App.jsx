@@ -10,6 +10,7 @@ const API_BASE_URL = 'http://localhost:8080/api';
 
 export default function App() {
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [refreshKey, setRefreshKey] = useState(0);
     const [showTransactionModal, setShowTransactionModal] = useState(false);
     const [transactionType, setTransactionType] = useState('');
     
@@ -56,9 +57,12 @@ export default function App() {
         setShowTransactionModal(true);
     };
 
+    // Di App.jsx (Handler Sukses)
+
     const handleTransactionSuccess = () => {
-        fetchTransactions();
+        fetchTransactions(); 
         fetchMembers();
+        setRefreshKey(prev => prev + 1);
     };
 
     const handleRegisterSuccess = () => {
@@ -71,7 +75,9 @@ export default function App() {
             <Layout activeTab={activeTab} setActiveTab={setActiveTab}>
                 {activeTab === 'dashboard' && (
                     <AdminPanel 
-                        onTransactionClick={handleTransactionClick}
+                        setActiveTab={setActiveTab}
+                        onTransactionClick={handleTransactionClick} 
+                        refreshKey={refreshKey}
                     />
                 )}
                 {activeTab === 'transactions' && (

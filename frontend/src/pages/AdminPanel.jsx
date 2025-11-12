@@ -57,7 +57,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
 
     // Hardcoded user info
     const currentUser = {
-        name: 'Admin Teller',
+        name: 'Admin dashboard',
         accountNumber: '7799021650880',
         currency: 'IDR'
     };
@@ -65,7 +65,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
-                <RefreshCw className="w-8 h-8 animate-spin text-blue-600" />
+                <RefreshCw className="w-8 h-8 animate-spin text-blue-800" />
                 <span className="ml-3 text-gray-600">Memuat Dashboard...</span>
             </div>
         );
@@ -94,7 +94,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
         <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                 {/* Balance Card */}
-                <div className="lg:col-span-2 bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 text-white shadow-lg">
+                <div className="lg:col-span-2 bg-gradient-to-br from-blue-900 to-blue-500 rounded-2xl p-6 text-white shadow-lg">
                     <div className="flex justify-between items-start mb-6">
                         <div className="flex items-center space-x-3">
                             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
@@ -162,7 +162,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                         { label: 'History', icon: History, color: 'purple', action: () => setActiveTab('transactions') },
                         { label: 'Members', icon: Users, color: 'blue', action: () => setActiveTab('members') }
                     ].map((btn, i) => (
-                        <button key={i} onClick={btn.action} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+                        <button key={i} onClick={btn.action} className="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:bg-blue-300 transition">
                             <div className={`w-12 h-12 bg-${btn.color}-100 rounded-xl flex items-center justify-center mb-3`}>
                                 <btn.icon className={`text-${btn.color}-600`} size={24} />
                             </div>

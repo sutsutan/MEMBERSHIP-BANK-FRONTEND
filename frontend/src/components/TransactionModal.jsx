@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Loader } from 'lucide-react';
 
-// --- PENTING: Perbaiki Base URL ke port 5000 ---
 const API_BASE_URL = 'http://localhost:8080/api';
 
 export default function TransactionModal({ show, transactionType, onClose, onSuccess }) {
@@ -25,30 +24,25 @@ export default function TransactionModal({ show, transactionType, onClose, onSuc
     try {
       setLoading(true);
       
-      // --- PERBAIKAN ENDPOINT DAN PAYLOAD ---
-      // Endpoint Backend: POST /api/transaction
-      // Payload Backend: { rfid_tag, jenis_transaksi, jumlah }
       const response = await fetch(`${API_BASE_URL}/transaction`, { 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          rfid_tag: formData.rfid,         // Sesuai field backend
-          jumlah: amountValue,             // Sesuai field backend
-          jenis_transaksi: transactionType.toUpperCase(), // 'DEPOSIT' atau 'WITHDRAW'
+          rfid_tag: formData.rfid,
+          jumlah: amountValue,
+          jenis_transaksi: transactionType.toUpperCase(),
         })
       });
 
       const result = await response.json(); 
       
       if (response.ok) {
-        // Asumsi backend mengembalikan { message, saldo_baru }
-        const formattedBalance = result.saldo_baru ? result.saldo_baru.toLocaleString('id-ID') : 'N/A';
+        const formattedBalance = parseFloat(result.saldo_baru).toLocaleString('id-ID');
         alert(`Transaksi ${transactionType.toUpperCase()} berhasil!\nSaldo Baru: Rp ${formattedBalance}`);
         setFormData({ rfid: '', amount: '' });
         if (onSuccess) onSuccess();
         onClose();
       } else {
-        // Tampilkan pesan error spesifik dari backend
         throw new Error(result.message || 'Transaksi gagal diproses oleh server.');
       }
     } catch (err) {

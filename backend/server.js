@@ -12,7 +12,7 @@ app.use(express.json());
 // --- ROUTES ---
 
 app.get('/', (req, res) => {
-    res.send('Metsoo Bank API is running! Use endpoints like /api/user/:rfidTag');
+    res.send('Metschoo Bank API is running! Use endpoints like /api/user/:rfidTag');
 });
 
 // Cek Saldo dan Riwayat (READ)
@@ -38,7 +38,10 @@ app.get('/api/anggota/:rfidTag', async (req, res) => {
         }
 
         // Response ke Frontend/Hardware
-        res.json(data[0]);
+        res.status(201).json({ 
+        message: 'Pendaftaran Berhasil.', 
+        member: data[0]
+    });
 
     } catch (error) {
         console.error('Error saat cek saldo:', error.message);

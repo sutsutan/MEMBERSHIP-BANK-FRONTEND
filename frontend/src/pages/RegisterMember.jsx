@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Loader } from 'lucide-react';
 
-// --- PENTING: Perbaiki Base URL ke port 5000 ---
 const API_BASE_URL = 'http://localhost:8080/api';
 
 export default function RegisterMember({ onRegisterSuccess }) {
@@ -19,37 +18,34 @@ export default function RegisterMember({ onRegisterSuccess }) {
             return;
         }
 
-        const initialBalance = parseInt(formData.deposit);
-        if (initialBalance < 0 || isNaN(initialBalance)) {
-            alert('Initial Deposit harus angka positif!');
+        const initialDepositValue = parseInt(formData.deposit); 
+        
+        if (initialDepositValue < 0 || isNaN(initialDepositValue)) {
+            alert('Initial Deposit harus angka positif atau nol!');
             return;
         }
 
         try {
             setLoading(true);
             
-            // --- PERBAIKAN ENDPOINT DAN PAYLOAD ---
-            // Endpoint Backend: POST /api/anggota
-            // Payload Backend: { nama, tanggal_lahir, rfid_tag, saldo }
-            const response = await fetch(`${API_BASE_URL}/anggota`, { // Menggunakan /anggota
+            const response = await fetch(`${API_BASE_URL}/register/member`, { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    nama: formData.name,            // Ganti name menjadi nama
-                    tanggal_lahir: formData.dob,    // Ganti dateOfBirth menjadi tanggal_lahir
-                    rfid_tag: formData.rfid,        // Ganti rfid menjadi rfid_tag
-                    saldo: initialBalance           // Ganti balance menjadi saldo
+                    nama: formData.name,
+                    tanggal_lahir: formData.dob,
+                    rfid_tag: formData.rfid,
+                    initial_deposit: initialDepositValue 
                 })
             });
 
-            const result = await response.json(); // Ambil pesan respons dari backend
+            const result = await response.json(); 
             
             if (response.ok) {
                 alert(`Member ${formData.name} berhasil didaftarkan!`);
-                setFormData({ name: '', dob: '', rfid: '', deposit: '' });
+                setFormData({ name: '', dob: '', rfid: '', deposit: '' }); 
                 if (onRegisterSuccess) onRegisterSuccess();
             } else {
-                // Tampilkan pesan error spesifik dari backend jika ada
                 throw new Error(result.message || 'Pendaftaran gagal diproses oleh server.');
             }
         } catch (err) {
@@ -59,7 +55,6 @@ export default function RegisterMember({ onRegisterSuccess }) {
         }
     };
 
-    // --- (Rendering tidak berubah) ---
     return (
         <div className="max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Register New Member</h2>

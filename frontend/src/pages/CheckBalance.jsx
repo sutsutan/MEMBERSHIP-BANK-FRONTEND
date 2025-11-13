@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowDownLeft, ArrowUpRight } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Loader } from 'lucide-react';
 
 const formatRupiah = (number) => {
     if (number === undefined || number === null) return '0';
@@ -8,7 +8,6 @@ const formatRupiah = (number) => {
     }).format(number);
 };
 
-// Fungsi Bantuan untuk Format Tanggal/Waktu
 const formatDate = (isoString) => {
     if (!isoString) return '';
     const date = new Date(isoString);
@@ -17,10 +16,21 @@ const formatDate = (isoString) => {
 };
 
 
-export default function CheckBalance({ transactions }) {
-    // Diasumsikan `transactions` di-fetch dari App.jsx menggunakan GET /api/transaksi/riwayat
+export default function CheckBalance({ transactions, loading }) {
+    
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <Loader className="animate-spin text-blue-600" size={48} />
+                <span className="ml-3 text-gray-600">Memuat Riwayat Transaksi...</span>
+            </div>
+        );
+    }
+
     if (!transactions || transactions.length === 0) {
-        return <div className="p-6 text-center text-gray-500">Tidak ada riwayat transaksi.</div>;
+        return <div className="p-6 text-center text-gray-500 bg-white rounded-xl shadow-sm">
+            <p className="text-lg">Tidak ada riwayat transaksi.</p>
+        </div>;
     }
 
     return (
@@ -36,12 +46,11 @@ export default function CheckBalance({ transactions }) {
                         </tr>
                     </thead>
                     <tbody>
-                        {transactions.map(tx => {
-                            // PENTING: Menyesuaikan dengan format API backend (jenis_transaksi, jumlah, nama, rfid_tag, waktu_transaksi)
+                        {transactions.map((tx, index) => { // Menggunakan index jika tx.id mungkin duplikat sementara
                             const isDeposit = tx.jenis_transaksi === 'DEPOSIT';
                             
                             return (
-                                <tr key={tx.id} className="border-t hover:bg-gray-50">
+                                <tr key={tx.id || index} className="border-t hover:bg-gray-50">
                                     <td className="p-4 text-sm text-gray-600">{formatDate(tx.waktu_transaksi)}</td>
                                     <td className="p-4">
                                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${

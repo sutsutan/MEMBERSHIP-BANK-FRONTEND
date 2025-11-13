@@ -1,153 +1,64 @@
-import { useEffect, useState } from "react";
+import React from 'react';
+import { Loader, CreditCard, Users } from 'lucide-react';
 
-function UserList() {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// Fungsi Bantuan untuk Format Rupiah
+const formatRupiah = (number) => {
+    if (number === undefined || number === null) return '0';
+    return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(number);
+};
 
-  // State untuk form tambah/edit
-  const [formData, setFormData] = useState({ id: null, name: "", email: "" });
+export default function UserList({ members, loading }) {
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <Loader className="animate-spin text-blue-600" size={48} />
+            </div>
+        );
+    }
 
-  // Ambil semua user
-  const fetchUsers = () => {
-    fetch("http://localhost:5000/api/users")
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setLoading(false);
-      });
-  };
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  // Tambah / Update user
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const method = formData.id ? "PUT" : "POST";
-    const url = formData.id
-      ? `http://localhost:5000/api/users/${formData.id}`
-      : "http://localhost:5000/api/users";
-
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: formData.name,
-        email: formData.email,
-      }),
-    });
-
-    const data = await res.json();
-    console.log(data);
-
-    setFormData({ id: null, name: "", email: "" });
-    fetchUsers();
-  };
-
-  // Hapus user
-  const handleDelete = async (id) => {
-    if (!confirm("Yakin ingin hapus user ini?")) return;
-
-    await fetch(`http://localhost:5000/api/users/${id}`, {
-      method: "DELETE",
-    });
-
-    fetchUsers();
-  };
-
-  // Edit user
-  const handleEdit = (user) => {
-    setFormData(user);
-  };
-
-  if (loading) return <p>Loading data...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-
-  return (
-    <div style={{ marginTop: "2rem", textAlign: "left" }}>
-      <h2>📋 Daftar Pengguna</h2>
-
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          marginBottom: "1rem",
-          padding: "1rem",
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-        }}
-      >
-        <h3>{formData.id ? "✏️ Edit User" : "➕ Tambah User"}</h3>
-        <input
-          type="text"
-          placeholder="Nama"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          required
-          style={{ marginRight: "0.5rem" }}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          required
-          style={{ marginRight: "0.5rem" }}
-        />
-        <button type="submit">
-          {formData.id ? "Update" : "Tambah"}
-        </button>
-        {formData.id && (
-          <button
-            type="button"
-            onClick={() => setFormData({ id: null, name: "", email: "" })}
-            style={{ marginLeft: "0.5rem" }}
-          >
-            Batal
-          </button>
-        )}
-      </form>
-
-      {users.length === 0 ? (
-        <p>Belum ada data pengguna.</p>
-      ) : (
-        <table border="1" cellPadding="8" style={{ borderCollapse: "collapse" }}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nama</th>
-              <th>Email</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.id}</td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>
-                  <button onClick={() => handleEdit(user)}>Edit</button>
-                  <button
-                    onClick={() => handleDelete(user.id)}
-                    style={{ marginLeft: "0.5rem" }}
-                  >
-                    Hapus
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
-  );
+    return (
+        <div className="max-w-7xl mx-auto">
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Member Directory</h2>
+            
+            {members.length === 0 && !loading ? (
+                <div className="text-center p-10 bg-white rounded-lg shadow-md">
+                    <Users size={48} className="mx-auto text-gray-400 mb-3" />
+                    <p className="text-lg text-gray-600">Tidak ada anggota yang terdaftar.</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {/* Data members dari API: { id, nama, rfid_tag, saldo, tanggal_lahir } */}
+                    {members.map(member => (
+                        <div key={member.rfid_tag} className="bg-white rounded-2xl p-6 shadow-sm">
+                            <div className="flex items-center space-x-4 mb-4">
+                                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                                    {member.nama.charAt(0)}
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-gray-800">{member.nama}</p>
+                                    <p className="text-sm text-gray-500">Member</p>
+                                </div>
+                            </div>
+                            <div className="space-y-2 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500 flex items-center"><CreditCard size={14} className="mr-1" /> RFID:</span>
+                                    {/* Menggunakan property rfid_tag dari API */}
+                                    <span className="font-mono font-medium">{member.rfid_tag}</span> 
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Balance:</span>
+                                    {/* Menggunakan property saldo dari API */}
+                                    <span className="font-semibold text-green-600">{formatRupiah(member.saldo)}</span> 
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
 }
-
-export default UserList;

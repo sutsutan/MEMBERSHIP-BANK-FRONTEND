@@ -43,7 +43,7 @@ export default function UserList({ members, loading }) {
                             </div>
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-500 flex items-center"><CreditCard size={14} className="mr-1" /> RFID:</span>
+                                    <span className="text-gray-500 flex items-center"><CreditCard size={14} className="mr-1" /> Card Number:</span>
                                     <span className="font-mono font-medium">{member.rfid_tag}</span> 
                                 </div>
                                 <div className="flex justify-between">

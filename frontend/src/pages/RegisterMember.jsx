@@ -63,7 +63,7 @@ export default function RegisterMember({ onRegisterSuccess }) {
                     {[
                         { label: 'Full Name', key: 'name', type: 'text', placeholder: 'Enter full name' },
                         { label: 'Date of Birth', key: 'dob', type: 'date' },
-                        { label: 'RFID Tag', key: 'rfid', type: 'text', placeholder: '14 digit RFID', maxLength: 14 },
+                        { label: 'Card Number', key: 'rfid', type: 'text', placeholder: '14 digit Card Number', maxLength: 14 },
                         { label: 'Initial Deposit', key: 'deposit', type: 'number', placeholder: 'Minimum Rp 50,000' }
                     ].map(field => (
                         <div key={field.key}>

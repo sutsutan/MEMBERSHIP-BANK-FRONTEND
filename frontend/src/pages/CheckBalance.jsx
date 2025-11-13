@@ -37,10 +37,10 @@ export default function CheckBalance({ transactions, loading }) {
         <div className="max-w-7xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">Transaction History</h2>
             <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                <table className="w-full">
+                <table className="w-full border-collapse table-fixed">
                     <thead className="bg-gray-50">
                         <tr>
-                            {['Date', 'Type', 'RFID', 'Member', 'Amount'].map(h => (
+                            {['Date', 'Type', 'Card Number', 'Member', 'Amount'].map(h => (
                                 <th key={h} className={`text-${h === 'Amount' ? 'right' : 'left'} p-4 text-sm font-semibold text-gray-600`}>{h}</th>
                             ))}
                         </tr>
@@ -51,16 +51,16 @@ export default function CheckBalance({ transactions, loading }) {
                             
                             return (
                                 <tr key={tx.id || index} className="border-t hover:bg-gray-50">
-                                    <td className="p-4 text-sm text-gray-600">{formatDate(tx.waktu_transaksi)}</td>
-                                    <td className="p-4">
+                                    <td className="ps-4 text-sm text-center text-gray-600">{formatDate(tx.waktu_transaksi)}</td>
+                                    <td className="ps-4 text-center">
                                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                                             isDeposit ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
                                         }`}>
                                             {tx.jenis_transaksi}
                                         </span>
                                     </td>
-                                    <td className="p-4 text-sm font-mono text-gray-600">{tx.rfid_tag}</td>
-                                    <td className="p-4 text-sm text-gray-800 font-medium">{tx.nama || 'N/A'}</td>
+                                    <td className="ps-4 text-sm text-center font-mono text-gray-600">{tx.rfid_tag}</td>
+                                    <td className="text-sm text-center text-gray-800 font-medium">{tx.nama || 'N/A'}</td>
                                     <td className="p-4 text-right">
                                         <span className={`font-semibold ${isDeposit ? 'text-green-600' : 'text-red-600'}`}>
                                             {isDeposit ? '+' : '-'} Rp {formatRupiah(tx.jumlah)}

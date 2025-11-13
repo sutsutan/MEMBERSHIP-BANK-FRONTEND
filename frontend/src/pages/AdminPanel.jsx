@@ -180,6 +180,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
         transactionValue: stats.total_transactions ?? 0,
         activeMember: stats.active_members ?? 0
     };
+    
 
     return (
         <div className="max-w-7xl mx-auto">
@@ -245,7 +246,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h3 className="font-semibold text-gray-800">Transaction Trends</h3>
-                        <p className="text-sm text-gray-500 mt-1">Deposit and withdrawal overview</p>
+                        <p className="text-sm text-gray-500 mt-1">Deposit and withdraw overview</p>
                     </div>
                     <div className="flex gap-2">
                         <button
@@ -362,7 +363,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                                         </div>
                                         <div>
                                             <p className="font-medium text-gray-800">{tx.nama || 'Anggota Tidak Dikenal'}</p>
-                                            <p className="text-xs text-gray-500">RFID: {tx.rfid_tag}</p>
+                                            <p className="text-xs text-gray-500">Card Number: {tx.rfid_tag}</p>
                                         </div>
                                     </div>
                                     <div className="text-right">

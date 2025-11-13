@@ -62,14 +62,14 @@ export default function TransactionModal({ show, transactionType, onClose, onSuc
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">RFID Tag</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
             <input
               type="text"
               maxLength="14"
               value={formData.rfid}
               onChange={e => setFormData({ ...formData, rfid: e.target.value })}
               className="w-full border border-gray-300 rounded-lg px-4 py-3 font-mono"
-              placeholder="Scan or enter RFID"
+              placeholder="Scan or enter Card Number"
             />
           </div>
           <div>

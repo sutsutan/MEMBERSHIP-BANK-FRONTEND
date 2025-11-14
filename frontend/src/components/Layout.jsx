@@ -48,7 +48,7 @@ export default function Layout({ children, activeTab, setActiveTab }) {
       <div className={`${sidebarOpen ? 'w-64' : 'w-0'} bg-white border-r transition-all duration-300 overflow-hidden shadow-sm flex-shrink-0`}>
         <div className="p-6">
           <div className="flex items-center space-x-3 mb-8">
-            <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-blue-800 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-tr from-blue-500 to-blue-800 rounded-lg flex items-center justify-center">
               <img src="public/img/logo-metland.png" alt="Bank Logo" className="w-8 h-8 object-contain rounded" />
             </div>
             <h1 className="text-xl font-bold text-gray-800">Metschoo Bank</h1>

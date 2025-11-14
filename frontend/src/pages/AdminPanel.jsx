@@ -49,13 +49,13 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
     const getDummyChartData = (period) => {
         if (period === 'weekly') {
             return [
-                { name: 'Sen', deposit: 4500000, withdraw: 3200000 },
-                { name: 'Sel', deposit: 5200000, withdraw: 4100000 },
-                { name: 'Rab', deposit: 3800000, withdraw: 2900000 },
-                { name: 'Kam', deposit: 6100000, withdraw: 4500000 },
-                { name: 'Jum', deposit: 7200000, withdraw: 5300000 },
-                { name: 'Sab', deposit: 5800000, withdraw: 3800000 },
-                { name: 'Min', deposit: 4200000, withdraw: 2800000 }
+                { name: '10 Nov', deposit: 4500000, withdraw: 3200000 },
+                { name: '11 Nov', deposit: 5200000, withdraw: 4100000 },
+                { name: '12 Nov', deposit: 3800000, withdraw: 2900000 },
+                { name: '13 Nov', deposit: 6100000, withdraw: 4500000 },
+                { name: '14 Nov', deposit: 7200000, withdraw: 5300000 },
+                { name: '15 Nov', deposit: 5800000, withdraw: 3800000 },
+                { name: '16 Nov', deposit: 4200000, withdraw: 2800000 }
             ];
         } else {
             return [
@@ -201,7 +201,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                     </div>
 
                     <div className="mb-6">
-                        <p className="text-sm opacity-90 mb-1">Available Balance</p>
+                        <p className="text-sm opacity-90 mb-1">Total Member Balance</p>
                         <p className="text-4xl font-bold">
                             {showBalance ? `${formatRupiah(statsDisplay.totalBalance)} ${currentUser.currency}` : '••••••••'}
                         </p>
@@ -222,7 +222,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                     <h3 className="font-semibold text-gray-800 mb-4">Account Statistics</h3>
                     <div className="space-y-4">
                         {[
-                            { icon: DollarSign, label: 'Total Balance', value: statsDisplay.totalBalance, bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
+                            { icon: DollarSign, label: 'Total Member Balance', value: statsDisplay.totalBalance, bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
                             { icon: History, label: 'Pending Trans.', value: statsDisplay.pendingTransactions, bgColor: 'bg-yellow-100', textColor: 'text-yellow-600' },
                             { icon: TrendingUp, label: 'Trans. Value', value: statsDisplay.transactionValue, bgColor: 'bg-green-100', textColor: 'text-green-600' },
                             { icon: Users, label: 'Active Member', value: statsDisplay.activeMember, bgColor: 'bg-purple-100', textColor: 'text-purple-600' }

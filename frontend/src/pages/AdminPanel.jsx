@@ -50,7 +50,7 @@ const getDummyChartData = (period) => {
             { name: '13 Nov 2025', deposit: 6100000, withdraw: 4500000 },
             { name: '14 Nov 2025', deposit: 7200000, withdraw: 5300000 },
             { name: '15 Nov 2025', deposit: 5800000, withdraw: 3800000 },
-            { name: '16 Nov', deposit: 4200000, withdraw: 2800000 }
+            { name: '16 Nov 2025', deposit: 4200000, withdraw: 2800000 }
         ];
     } else {
         return [

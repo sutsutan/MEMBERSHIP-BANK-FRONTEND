@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Copy, Check, DollarSign, History, TrendingUp, Users, ArrowDownLeft, ArrowUpRight, RefreshCw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = 'https://uapjdjnolfjleehvdcdh.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVhcGpkam5vbGZqbGVlaHZkY2RoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE3MTQxMjMsImV4cCI6MjA3NzI5MDEyM30.T1OCjB_1ZGhtWZgAxk1BFskNtjzQQzbNJiKoGXpHOp8'; // GANTI INI
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const API_BASE_URL = 'http://localhost:8080/api';
 
@@ -15,10 +20,9 @@ const formatTime = (isoString) => {
     if (!isoString) return '';
     const date = new Date(isoString);
     return date.toLocaleDateString('id-ID', { year: '2-digit', month: '2-digit', day: '2-digit' }) 
-         + ' ' + date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        + ' ' + date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 };
 
-// Custom Tooltip for Chart
 const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
         return (
@@ -36,6 +40,29 @@ const CustomTooltip = ({ active, payload }) => {
     return null;
 };
 
+// Dummy data untuk fallback
+const getDummyChartData = (period) => {
+    if (period === 'weekly') {
+        return [
+            { name: 'Sen', deposit: 4500000, withdraw: 3200000 },
+            { name: 'Sel', deposit: 5200000, withdraw: 4100000 },
+            { name: 'Rab', deposit: 3800000, withdraw: 2900000 },
+            { name: 'Kam', deposit: 6100000, withdraw: 4500000 },
+            { name: 'Jum', deposit: 7200000, withdraw: 5300000 },
+            { name: 'Sab', deposit: 5800000, withdraw: 3800000 },
+            { name: 'Min', deposit: 4200000, withdraw: 2800000 }
+        ];
+    } else {
+        return [
+            { name: 'Week 1', deposit: 22000000, withdraw: 18000000 },
+            { name: 'Week 2', deposit: 25000000, withdraw: 21000000 },
+            { name: 'Week 3', deposit: 13000000, withdraw: 21000000 },
+            { name: 'Week 4', deposit: 24000000, withdraw: 19000000 }
+        ];
+    }
+};
+
+
 export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKey }) {
     const [stats, setStats] = useState(null);
     const [recentTransactions, setRecentTransactions] = useState([]);
@@ -44,33 +71,42 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
     const [chartPeriod, setChartPeriod] = useState('weekly');
     const [showBalance, setShowBalance] = useState(true);
     const [copied, setCopied] = useState(false);
-
-    // Dummy data untuk fallback
-    const getDummyChartData = (period) => {
-        if (period === 'weekly') {
-            return [
-                { name: 'Sen', deposit: 4500000, withdraw: 3200000 },
-                { name: 'Sel', deposit: 5200000, withdraw: 4100000 },
-                { name: 'Rab', deposit: 3800000, withdraw: 2900000 },
-                { name: 'Kam', deposit: 6100000, withdraw: 4500000 },
-                { name: 'Jum', deposit: 7200000, withdraw: 5300000 },
-                { name: 'Sab', deposit: 5800000, withdraw: 3800000 },
-                { name: 'Min', deposit: 4200000, withdraw: 2800000 }
-            ];
-        } else {
-            return [
-                { name: 'Week 1', deposit: 22000000, withdraw: 18000000 },
-                { name: 'Week 2', deposit: 25000000, withdraw: 21000000 },
-                { name: 'Week 3', deposit: 13000000, withdraw: 21000000 },
-                { name: 'Week 4', deposit: 24000000, withdraw: 19000000 }
-            ];
-        }
-    };
-
+    
+    // State baru untuk memicu re-fetch chart data dari Realtime
+    const [chartRefreshKey, setChartRefreshKey] = useState(0); 
+    
     const [chartData, setChartData] = useState(getDummyChartData('weekly'));
     const [chartLoading, setChartLoading] = useState(false);
 
-    // Fetch chart data from backend
+    useEffect(() => {
+        let isMounted = true;
+        
+        try {
+            const transactionsChannel = supabase
+                .channel('admin-dashboard-changes')
+                .on(
+                    'postgres_changes',
+                    { event: 'INSERT', schema: 'public', table: 'transaksi' }, 
+                    (payload) => {
+                        console.log('Realtime transaction inserted. Refreshing dashboard data:', payload);
+                        if (isMounted) {
+                            setChartRefreshKey(prevKey => prevKey + 1);
+                        }
+                    }
+                )
+                .subscribe();
+
+            return () => {
+                isMounted = false;
+                supabase.removeChannel(transactionsChannel);
+            };
+
+        } catch (e) {
+            console.error("Failed to set up Supabase Realtime:", e);
+        }
+        
+    }, []); 
+    
     useEffect(() => {
         let isMounted = true;
 
@@ -83,12 +119,18 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                 if (!response.ok) throw new Error(data.message || 'Gagal ambil data chart.');
                 
                 if (isMounted) {
-                    setChartData(data);
+                    const formattedData = data.map(item => ({
+                        name: item.name,
+                        deposit: parseInt(item.deposit, 10),
+                        withdraw: parseInt(item.withdraw, 10)
+                    }));
+                    
+                    setChartData(formattedData);
                 }
             } catch (err) {
-                console.error("Error fetching chart data:", err);
+                console.error("Error fetching chart data, using dummy data as fallback:", err);
                 if (isMounted) {
-                    setChartData(getDummyChartData(chartPeriod));
+                    setChartData(getDummyChartData(chartPeriod)); 
                 }
             } finally {
                 if (isMounted) {
@@ -102,9 +144,8 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
         return () => {
             isMounted = false;
         };
-    }, [chartPeriod]);
+    }, [chartPeriod, chartRefreshKey]); 
 
-    // Fetch dashboard data
     useEffect(() => {
         let isMounted = true;
 
@@ -141,8 +182,8 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
         return () => {
             isMounted = false;
         };
-    }, [refreshKey]);
-
+    }, [refreshKey, chartRefreshKey]);
+        
     const currentUser = {
         name: 'Admin dashboard',
         accountNumber: '7799021650880',

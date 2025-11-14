@@ -196,5 +196,28 @@ app.get('/api/statistics', async (req, res) => {
     }
 });
 
+app.get('/api/statistics/chart', async (req, res) => {
+    const { period } = req.query; 
+    
+    const rpc_name = period === 'monthly' 
+                     ? 'get_monthly_transactions' 
+                     : 'get_weekly_transactions'; 
+
+    try {
+        const { data, error } = await supabase.rpc(rpc_name); 
+
+        if (error) {
+            console.error(`Supabase RPC Error for ${rpc_name}:`, error);
+            return res.status(500).json({ message: error.message || 'Gagal mengambil data chart.' });
+        }
+
+        res.status(200).json(data);
+        
+    } catch (err) {
+        console.error("Server Error:", err);
+        res.status(500).json({ message: 'Internal Server Error.' });
+    }
+});
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log(`Server berjalan di http://localhost:${PORT}`));

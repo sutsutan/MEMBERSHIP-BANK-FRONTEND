@@ -250,7 +250,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                     </div>
 
                     <div className="mb-6">
-                        <p className="text-sm opacity-90 mb-1">Available Balance</p>
+                        <p className="text-sm opacity-90 mb-1">Total Member Balance</p>
                         <p className="text-4xl font-bold">
                             {showBalance ? `${formatRupiah(statsDisplay.totalBalance)} ${currentUser.currency}` : '••••••••'}
                         </p>
@@ -263,7 +263,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                     <h3 className="font-semibold text-gray-800 mb-4">Account Statistics</h3>
                     <div className="space-y-4">
                         {[
-                            { icon: DollarSign, label: 'Total Balance', value: statsDisplay.totalBalance, bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
+                            { icon: DollarSign, label: 'Total Member Balance', value: statsDisplay.totalBalance, bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
                             { icon: History, label: 'Pending Trans.', value: statsDisplay.pendingTransactions, bgColor: 'bg-yellow-100', textColor: 'text-yellow-600' },
                             { icon: TrendingUp, label: 'Trans. Value', value: statsDisplay.transactionValue, bgColor: 'bg-green-100', textColor: 'text-green-600' },
                             { icon: Users, label: 'Active Member', value: statsDisplay.activeMember, bgColor: 'bg-purple-100', textColor: 'text-purple-600' }

@@ -23,7 +23,7 @@ const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
         return (
             <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
-                <p className="font-semibold text-gray-800 mb-2">{payload[0].payload.name}</p>
+                <p className="font-semibold text-gray-800 mb-5">{payload[0].payload.name}</p>
                 <p className="text-green-600 text-sm">
                     Deposit: Rp {formatRupiah(payload[0].value)}
                 </p>
@@ -180,7 +180,6 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
         transactionValue: stats.total_transactions ?? 0,
         activeMember: stats.active_members ?? 0
     };
-    
 
     return (
         <div className="max-w-7xl mx-auto">
@@ -242,6 +241,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                 </div>
             </div>
 
+            {/* Chart Section */}
             <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
                 <div className="flex justify-between items-center mb-6">
                     <div>
@@ -267,6 +267,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                         </button>
                     </div>
                 </div>
+
                 {chartLoading ? (
                     <div className="flex justify-center items-center h-80">
                         <RefreshCw className="w-6 h-6 animate-spin text-blue-600" />
@@ -274,12 +275,13 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                     </div>
                 ) : chartData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={400}>
-                        <LineChart data={chartData} margin={{ top: 20, right: 50, left: 20, bottom: 20 }}>
+                        <LineChart data={chartData} margin={{ top: 20, right: 50, left: 20, bottom: 40 }}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                             <XAxis 
                                 dataKey="name" 
                                 stroke="#6b7280"
                                 style={{ fontSize: '14px' }}
+                                tickMargin={15} // jarak label hari dari garis bawah chart
                             />
                             <YAxis 
                                 stroke="#6b7280"
@@ -289,7 +291,6 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                             <Tooltip 
                                 content={<CustomTooltip />}
                                 cursor={{ stroke: '#e5e7eb', strokeWidth: 2 }}
-                                position={{ y: 0 }}
                             />
                             <Legend 
                                 wrapperStyle={{ paddingTop: '20px' }}
@@ -322,6 +323,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                 )}
             </div>
 
+            {/* Actions Section */}
             <div className="bg-white rounded-2xl p-6 shadow-sm mb-6">
                 <h3 className="font-semibold text-gray-800 mb-4">What would you like to do today?</h3>
                 <p className="text-sm text-gray-500 mb-4">Choose from our popular actions below</p>
@@ -342,6 +344,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                 </div>
             </div>
 
+            {/* Recent Transactions */}
             <div className="bg-white rounded-2xl p-6 shadow-sm">
                 <h3 className="font-semibold text-gray-800 mb-4">Recent Transactions</h3>
                 <div className="space-y-3">
@@ -363,7 +366,7 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                                         </div>
                                         <div>
                                             <p className="font-medium text-gray-800">{tx.nama || 'Anggota Tidak Dikenal'}</p>
-                                            <p className="text-xs text-gray-500">Card Number: {tx.rfid_tag}</p>
+                                            <p className="text-xs text-gray-500">RFID: {tx.rfid_tag}</p>
                                         </div>
                                     </div>
                                     <div className="text-right">

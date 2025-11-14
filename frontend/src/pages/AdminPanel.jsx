@@ -44,13 +44,13 @@ const CustomTooltip = ({ active, payload }) => {
 const getDummyChartData = (period) => {
     if (period === 'weekly') {
         return [
-            { name: '10 Nov 2025', deposit: 4500000, withdraw: 3200000 },
-            { name: '11 Nov 2025', deposit: 5200000, withdraw: 4100000 },
-            { name: '12 Nov 2025', deposit: 3800000, withdraw: 2900000 },
-            { name: '13 Nov 2025', deposit: 6100000, withdraw: 4500000 },
-            { name: '14 Nov 2025', deposit: 7200000, withdraw: 5300000 },
-            { name: '15 Nov 2025', deposit: 5800000, withdraw: 3800000 },
-            { name: '16 Nov', deposit: 4200000, withdraw: 2800000 }
+            { name: 'Sen', deposit: 4500000, withdraw: 3200000 },
+            { name: 'Sel', deposit: 5200000, withdraw: 4100000 },
+            { name: 'Rab', deposit: 3800000, withdraw: 2900000 },
+            { name: 'Kam', deposit: 6100000, withdraw: 4500000 },
+            { name: 'Jum', deposit: 7200000, withdraw: 5300000 },
+            { name: 'Sab', deposit: 5800000, withdraw: 3800000 },
+            { name: 'Min', deposit: 4200000, withdraw: 2800000 }
         ];
     } else {
         return [
@@ -71,29 +71,6 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
     const [chartPeriod, setChartPeriod] = useState('weekly');
     const [showBalance, setShowBalance] = useState(true);
     const [copied, setCopied] = useState(false);
-
-    // Dummy data untuk fallback
-    const getDummyChartData = (period) => {
-        if (period === 'weekly') {
-            return [
-                { name: '10 Nov', deposit: 4500000, withdraw: 3200000 },
-                { name: '11 Nov', deposit: 5200000, withdraw: 4100000 },
-                { name: '12 Nov', deposit: 3800000, withdraw: 2900000 },
-                { name: '13 Nov', deposit: 6100000, withdraw: 4500000 },
-                { name: '14 Nov', deposit: 7200000, withdraw: 5300000 },
-                { name: '15 Nov', deposit: 5800000, withdraw: 3800000 },
-                { name: '16 Nov', deposit: 4200000, withdraw: 2800000 }
-            ];
-        } else {
-            return [
-                { name: 'Week 1', deposit: 22000000, withdraw: 18000000 },
-                { name: 'Week 2', deposit: 25000000, withdraw: 21000000 },
-                { name: 'Week 3', deposit: 13000000, withdraw: 21000000 },
-                { name: 'Week 4', deposit: 24000000, withdraw: 19000000 }
-            ];
-        }
-    };
-
     
     // State baru untuk memicu re-fetch chart data dari Realtime
     const [chartRefreshKey, setChartRefreshKey] = useState(0); 
@@ -265,28 +242,20 @@ export default function AdminPanel({ setActiveTab, onTransactionClick, refreshKe
                     </div>
 
                     <div className="mb-6">
-                        <p className="text-sm opacity-90 mb-1">Total Member Balance</p>
+                        <p className="text-sm opacity-90 mb-1">Available Balance</p>
                         <p className="text-4xl font-bold">
                             {showBalance ? `${formatRupiah(statsDisplay.totalBalance)} ${currentUser.currency}` : '••••••••'}
                         </p>
                     </div>
 
-                    <div className="flex items-center justify-between bg-white/10 rounded-xl p-4">
-                        <div>
-                            <p className="text-xs opacity-75 mb-1">Your Account Number</p>
-                            <p className="font-mono font-semibold">{currentUser.accountNumber}</p>
-                        </div>
-                        <button onClick={handleCopy} className="p-2 bg-white/20 rounded-lg hover:bg-white/30 transition">
-                            {copied ? <Check size={20} /> : <Copy size={20} />}
-                        </button>
-                    </div>
+                   
                 </div>
 
                 <div className="bg-white rounded-2xl p-6 shadow-sm">
                     <h3 className="font-semibold text-gray-800 mb-4">Account Statistics</h3>
                     <div className="space-y-4">
                         {[
-                            { icon: DollarSign, label: 'Total Member Balance', value: statsDisplay.totalBalance, bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
+                            { icon: DollarSign, label: 'Total Balance', value: statsDisplay.totalBalance, bgColor: 'bg-blue-100', textColor: 'text-blue-600' },
                             { icon: History, label: 'Pending Trans.', value: statsDisplay.pendingTransactions, bgColor: 'bg-yellow-100', textColor: 'text-yellow-600' },
                             { icon: TrendingUp, label: 'Trans. Value', value: statsDisplay.transactionValue, bgColor: 'bg-green-100', textColor: 'text-green-600' },
                             { icon: Users, label: 'Active Member', value: statsDisplay.activeMember, bgColor: 'bg-purple-100', textColor: 'text-purple-600' }
